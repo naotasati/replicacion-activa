@@ -1,0 +1,22 @@
+Ejecución
+1 levantar FO0 y FO1
+2 levantar proxy 1 con puertos 6666 6667 7777 7778
+3 levantar TO
+4 levantar ARH0 y ARH1
+5 levantar proxy 0 con puertos 4444 4445 5555 5556
+6 levantar RR0 Y RR1
+7 levantar CLIENT0 Y CLIENT1
+
+
+node FO0.js
+node FO1.js
+node proxy1.js 6666 6667 7777 7778
+node proxy0.js 4444 4445 5555 5556
+
+node --max_old_space_size=10 CLIENT0.js --production
+node --max_old_space_size=10 CLIENT1.js --production
+node --prof --max_old_space_size=10 ARH0.js --production
+node --prof --max_old_space_size=10 ARH1.js --production
+
+npm install node-tick-processor
+node --prof-process isolate-0x1a57ec0-v8.log.log

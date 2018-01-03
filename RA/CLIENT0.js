@@ -27,8 +27,8 @@ var mensaje = [{
                    
 	var recibido = JSON.parse(msg); //Pasar a JSON el string recibido
 	console.log(' Resultado: ' + JSON.stringify(recibido.res));
-    console.timeEnd(' TimeOut0 ');              
-    console.log('\n');
+        console.timeEnd(' TimeOut0 ');              
+        console.log('\n');
 	NuevaPeticion(); //Llamamos de nuevo a la funcion
 })
 }];
@@ -55,14 +55,19 @@ function NuevaPeticion(){
 		}
 		else if((args[0]=='push' || args[0]=='unshift' || args[0]=='indexOf') && args[1]!=null){
 			//JSON de la identificacion de user y el request
+                    for (i = 0; i < 1 ; i++) {
 			var envioCliente_RR ={
 				ide: id,
 				request: args[0]+' '+args[1]
 			}
-            
 			//String del JSON para enviar
-			sEnvioCliente_RR = JSON.stringify(envioCliente_RR);
+                        sEnvioCliente_RR = JSON.stringify(envioCliente_RR);
 			rq.send(sEnvioCliente_RR); //Enviamos al RR
+                        
+                        }
+
+
+			
 		}
 		else if(args[0]=='exit'){
 			rq.close();
@@ -90,26 +95,3 @@ function randString () {
 	result.splice(len / 2, 0, ['-']);
 	return result.join('');
 }
-
-
-//_________________________WebServiceHTTP_______________________
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-
-app.use(express.static('Client'));
-
-
-
-io.on('connection',function(socket){
-    console.log("El cliente con IP: "+socket.handshake.address+" se ha conectado...");
-    socket.emit('mensaje', mensaje);
-});
-
-server.listen(3000, function(){
-    //console.log('\n\n\nServidor esta funcionando en http://127.0.0.1:3000');
-    
-});
-//___________________________endWebServiceHTTP_________________________
-

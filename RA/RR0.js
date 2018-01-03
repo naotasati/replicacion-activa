@@ -82,7 +82,7 @@ for(var j=0;j<hlist.length;j++){
 		//Si los req_id son iguales
 		if(underScore.isEqual(resultJSON.req_id, request.req_id) ){ 
 		rp.send(result); //Enviamos el resultado al cliente
-		console.log(' Result recibido y enviado\n');
+		console.log('RR0 Result recibido y enviado\n');
 		}
 		else{
 		console.log(' Req_id distinto entre resultado y envio\n')
@@ -104,7 +104,7 @@ process.on('SIGINT', function() {//Cerrar adecuadamente cada socket
 function siguiente(i){
 	if(i>=0){
 		rqs[i].send(sRequest); //Enviamos al servidor i el string
-		console.log(' Enviando a... '+ 'tcp://127.0.0.1:4445');
+		//console.log(' Enviando a... '+ 'tcp://127.0.0.1:4445');
 		recibido = false;
 		setTimeout(function TDeEspera(){//Cada 1 segundo repetir la funcion
 			if(!recibido){	//Si no hemos recibido mensaje

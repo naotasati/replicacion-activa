@@ -79,7 +79,7 @@ rp.on('message',function(msgRR,err){
 	}
 	recibido = false;		//Control de mensaje recibido, admitir solo el primero
 	msgRRJSON = JSON.parse(msgRR);	//Pasamos el String a JSON
-	console.log('\n Ha llegado una peticion del cliente 1 '+msgRRJSON.req_id.cl_id);
+	console.log('\n ARH1 - Ha llegado una peticion: '+msgRRJSON.req_id.cl_id);
 	Sequencer.GetSeq(msgRR,function callback(seq){ 	//Obtenemos la secuencia del TO
 		if(seq > lastServedReq + 1){
 			for(var j=lastServedReq+1;j<seq;j++){

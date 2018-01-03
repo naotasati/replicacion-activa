@@ -25,8 +25,8 @@ rq.on('message',function(msg,err){
     
 	var recibido = JSON.parse(msg); //Pasar a JSON el string recibido
 	console.log(' Resultado: ' + JSON.stringify(recibido.res));
-    console.timeEnd(' TimeOut1 ');              
-    console.log('\n');
+        console.timeEnd(' TimeOut1 ');              
+        console.log('\n');
 	NuevaPeticion(); //Llamamos de nuevo a la funcion
 });
 
@@ -48,9 +48,9 @@ function NuevaPeticion(){
 			sEnvioCliente_RR = JSON.stringify(envioCliente_RR);
 			rq.send(sEnvioCliente_RR); //Enviamos al RR
 		}
-		else if((args[0]=='push' || args[0]=='unshift' || args[0]=='indexOf')
-&& args[1]!=null){
+		else if((args[0]=='push' || args[0]=='unshift' || args[0]=='indexOf') && args[1]!=null){
 			//JSON de la identificacion de user y el request
+                        for (i = 0; i < 1 ; i++) {
 			var envioCliente_RR ={
 				ide: id,
 				request: args[0]+' '+args[1]
@@ -59,6 +59,9 @@ function NuevaPeticion(){
 			//String del JSON para enviar
 			sEnvioCliente_RR = JSON.stringify(envioCliente_RR);
 			rq.send(sEnvioCliente_RR); //Enviamos al RR
+                        
+                                                    }
+                                        
 		}
 		else if(args[0]=='exit'){
 			rq.close();
