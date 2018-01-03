@@ -4,6 +4,8 @@ var underScore = require('underscore');	//Underscore
 //VARIABLES
 var rp = zmq.socket('rep');	//Socket de Reply
 var rq = zmq.socket('req');	//Socket de Request
+var rq0 = zmq.socket('req');	//Socket de Request
+var rq1 = zmq.socket('req');	//Socket de Request
 var cl_seq = 0;			//Secuencia del cliente
 var req_id;			//JSON de identificacion de cliente
 var request;			//JSON del request
@@ -12,7 +14,30 @@ var sRequest; 	//String de JSON
 var resultJSON;	//JSON del resultado
 var i; 		//Posicion array servers hlist
 var rqs = [];	//Array para almacenar los ARH
-var hlist = ['tcp://127.0.0.1:9023'];
+var hlist = ['tcp://127.0.0.1:9023','tcp://127.0.0.1:9020'];
+
+//=================================proxy0=======================================
+var requester = zmq.socket('req');
+var ipBroker = '127.0.0.1';
+var portBroker = '5555';
+var identityRR = '1';
+var serviceRequest = request;
+
+requester.identity = identityRR;
+requester.connect('tcp://' + ipBroker + ':' + portBroker );
+
+console.log("RR1 ( " + identityRR + " ) connected to tcp://" + ipBroker + ":" + portBroker + " ...");
+
+requester.on('message', function(msg) {
+	console.log("RR1 ( " + identityRR + " ) has received reply: " + msg.toString());
+	requester.close();
+	process.exit(0);
+});
+
+console.log("RR1 ( " + identityRR + " ) has sent its msg: " + serviceRequest);
+
+//requester.send(serviceRequest);
+
 //=================================CODIGO======================================
 for(var k=0; k<hlist.length; k++){	//Conectamos todos los h(i)
 	rqs[k] = zmq.socket('req');		//Socket de Request 
@@ -44,7 +69,7 @@ rp.on('message',function(msgCliente,err){
 	siguiente(i);	//Funcion para enviar el request al server o servers
 });
 //_____________________________________________________________________________
-//Listener para cuando recibimos el resultado de ARH.js
+//Listener 
 for(var j=0;j<hlist.length;j++){
 	rqs[j].on('message',function(result,err){
 		if( err ) {
@@ -67,6 +92,7 @@ for(var j=0;j<hlist.length;j++){
 //LISTENER para Ctrl + C -> salir
 process.on('SIGINT', function() {//Cerrar adecuadamente cada socket
 	rp.close();
+	rq1.close();
 	for(var k=0; k<hlist.length; k++){
 		rqs[k].close();
 	}
@@ -77,11 +103,10 @@ process.on('SIGINT', function() {//Cerrar adecuadamente cada socket
 function siguiente(i){
 	if(i>=0){
 		rqs[i].send(sRequest); //Enviamos al servidor i el string
-		console.log(' Enviando a... '+ hlist[i].toString());
+		console.log(' Enviando a... '+ 'tcp://127.0.0.1:5556');
 		recibido = false;
 		setTimeout(function TDeEspera(){//Cada 1 segundo repetir la funcion
 			if(!recibido){	//Si no hemos recibido mensaje
-				console.log(' |-El servido parece estar caido, reenvio: ');
 				siguiente(i-1);	//Llamar a la funcion con i-1
 			}
 		},1000);

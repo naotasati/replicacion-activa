@@ -22,8 +22,11 @@ rq.on('message',function(msg,err){
 		throw err;
 		console.log(err);
 	}
+    
 	var recibido = JSON.parse(msg); //Pasar a JSON el string recibido
-	console.log(' Resultado: ' + JSON.stringify(recibido.res)+'\n');
+	console.log(' Resultado: ' + JSON.stringify(recibido.res));
+    console.timeEnd(' TimeOut1 ');              
+    console.log('\n');
 	NuevaPeticion(); //Llamamos de nuevo a la funcion
 });
 
@@ -34,6 +37,7 @@ rq.on('message',function(msg,err){
 function NuevaPeticion(){
 	rl.question(" Introduzca la operacion: ", function LeerTeclado(re) {
 		var args = re.trim().split(' ');
+        console.time(' TimeOut1 '); 
 		if( (args[0]=='pop' || args[0]=='shift') && args[1]==null){
 			//JSON de la identificacion de user y el request
 			var envioCliente_RR ={
@@ -65,7 +69,9 @@ function NuevaPeticion(){
 			console.log(' Donde x es el elemento a añadir (inicio o final	del array) o buscar en el array\n');
 			NuevaPeticion();
 		}
+        
 	});
+    
 };
 //
 //FUNCION de string aleatorio

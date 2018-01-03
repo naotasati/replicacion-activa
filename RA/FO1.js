@@ -14,6 +14,34 @@ var arrayPrueba = []; //Array para el supuesto
 for(k=0; k<21; k++){
 	arrayPrueba[k]=k.toString();
 }
+//=================================proxy1======================================
+
+var responder = zmq.socket('req');
+var auxfunctions = require('./auxfunctions.js');
+
+var endpoint = 7778;
+var id = '1';
+var disponibilidad = 'OK';
+var atencion = 'PROXY RECIBIDO ARH0';
+var num = 0;
+
+console.log('ARH ( ' + id + ' ) connected to ' + endpoint + " Proxy1");
+console.log('ARH ( ' + id + ' ) has sent READY msg: ' + disponibilidad);
+
+responder.identity = id;
+responder.connect('tcp://127.0.0.1:'+endpoint);
+
+responder.on('message', function() {
+	console.log("FO ( " + id + " ) has received request: ( " + msgRRJSON + " ) from ARH0");
+	//auxfunctions.showArguments(args);
+	setTimeout(function() {
+		console.log("FO ( " + id + " ) has send its reply");
+		console.log(atencion);
+		console.log("FO ( " + id + " ) has sent " + (++num) + " replies");
+		responder.send(atencion);
+	}, 1000);
+});
+responder.send(disponibilidad);
 //=================================CODIGO======================================
 console.log('');
 	for(var k=0;k<publist.length;k++){
@@ -21,7 +49,7 @@ console.log('');
 		subSocket[k].connect(publist[k]); //conectarlo
 		console.log(' Conectado al publicador: ' + publist[k]);
 		subSocket[k].subscribe(''); //Subscibirse a la "cadena vacia"
-	//_____________________________________________________________________________
+//_____________________________________________________________________________
 		pushSocket[k] = zmq.socket('push'); //crear el push para cada pull
 		pushSocket[k].connect(pulllist[k]); //conectar a todos los hi con push
 		console.log(' Conectado al pull: ' + pulllist[k]);

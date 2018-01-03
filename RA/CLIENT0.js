@@ -15,17 +15,25 @@ console.log('\n +++ Conectado al RR 127.0.0.1:9010 +++\n');
 console.log(' Info: Introduciendo exit el programa terminara');
 NuevaPeticion(); //Llamamos a la funcion NuevaPeticion
 
-//===============================LISTENERS=====================================
+//======================
+//=========LISTENERS=====================================
 //Listener para los mensajes de vuelta al cliente con el resultado del request
-rq.on('message',function(msg,err){
-	if( err ){
+var mensaje = [{ 
+               text: rq.on('message',function(msg,err){
+    if( err ){
 		throw err;
 		console.log(err);
 	}
+                   
 	var recibido = JSON.parse(msg); //Pasar a JSON el string recibido
-	console.log(' Resultado: ' + JSON.stringify(recibido.res)+'\n');
+	console.log(' Resultado: ' + JSON.stringify(recibido.res));
+    console.timeEnd(' TimeOut0 ');              
+    console.log('\n');
 	NuevaPeticion(); //Llamamos de nuevo a la funcion
-});
+})
+}];
+
+
 
 //===============================FUNCIONES=====================================
 //FUNCION en la que creamos el objeto JSON con el identificador y el request
@@ -34,6 +42,7 @@ rq.on('message',function(msg,err){
 function NuevaPeticion(){
 	rl.question(" Introduzca la operacion: ", function LeerTeclado(re) {
 		var args = re.trim().split(' ');
+        console.time(' TimeOut0 '); 
 		if( (args[0]=='pop' || args[0]=='shift') && args[1]==null){
 			//JSON de la identificacion de user y el request
 			var envioCliente_RR ={
@@ -44,14 +53,13 @@ function NuevaPeticion(){
 			sEnvioCliente_RR = JSON.stringify(envioCliente_RR);
 			rq.send(sEnvioCliente_RR); //Enviamos al RR
 		}
-		else if((args[0]=='push' || args[0]=='unshift' || args[0]=='indexOf')
-&& args[1]!=null){
+		else if((args[0]=='push' || args[0]=='unshift' || args[0]=='indexOf') && args[1]!=null){
 			//JSON de la identificacion de user y el request
 			var envioCliente_RR ={
 				ide: id,
 				request: args[0]+' '+args[1]
 			}
-
+            
 			//String del JSON para enviar
 			sEnvioCliente_RR = JSON.stringify(envioCliente_RR);
 			rq.send(sEnvioCliente_RR); //Enviamos al RR
@@ -65,9 +73,11 @@ function NuevaPeticion(){
 			console.log(' Donde x es el elemento a añadir (inicio o final	del array) o buscar en el array\n');
 			NuevaPeticion();
 		}
+        
 	});
 };
 //
+
 //FUNCION de string aleatorio
 function randString () {
 	var len = 10
@@ -82,4 +92,24 @@ function randString () {
 }
 
 
+//_________________________WebServiceHTTP_______________________
+var express = require('express');
+var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+app.use(express.static('Client'));
+
+
+
+io.on('connection',function(socket){
+    console.log("El cliente con IP: "+socket.handshake.address+" se ha conectado...");
+    socket.emit('mensaje', mensaje);
+});
+
+server.listen(3000, function(){
+    //console.log('\n\n\nServidor esta funcionando en http://127.0.0.1:3000');
+    
+});
+//___________________________endWebServiceHTTP_________________________
 

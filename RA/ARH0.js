@@ -13,21 +13,67 @@ var lastServedReq = 0;			//Ultima peticion atendida
 var seq;				//Numero de secuencia
 var seqaux;
 var recibido = false;			//Si hemos recibido un mensaje
+
+//=================================proxy0======================================
+
+var responder = zmq.socket('req');
+var auxfunctions = require('./auxfunctions.js');
+
+var endpoint = '4445';
+var id = '0';
+var disponibilidad = 'OK';
+var atencion = 'PROXY RECIBIDO RR0';
+var num = 0;
+
+console.log('ARH ( ' + id + ' ) connected to ' + endpoint + " Proxy0");
+console.log('ARH ( ' + id + ' ) has sent READY msg: ' + disponibilidad);
+
+responder.identity = id;
+responder.connect('tcp://127.0.0.1:'+endpoint);
+
+responder.on('message', function() {
+	console.log("ARH ( " + id + " ) has received request: ( " + msgRRJSON + " ) from RR0");
+	//auxfunctions.showArguments(args);
+	setTimeout(function() {
+		console.log("ARH ( " + id + " ) has send its reply");
+		console.log(atencion);
+		console.log("ARH ( " + id + " ) has sent " + (++num) + " replies");
+		responder.send(atencion);
+	}, 1000);
+});
+responder.send(disponibilidad);
+//=================================proxy1=======================================
+var requester = zmq.socket('req');
+var ipBroker = '127.0.0.1';
+var portBroker = '6666';
+var identityARH = '0';
+var serviceRequest = requester;
+
+requester.identity = identityARH;
+requester.connect('tcp://' + ipBroker + ':' + portBroker );
+
+console.log("ARH0 ( " + identityARH + " ) connected to tcp://" + ipBroker + ":" + portBroker + " ...");
+
+requester.on('message', function(msg) {
+	console.log("ARH0 ( " + identityARH + " ) has received reply: " + msg.toString());
+	requester.close();
+	process.exit(0);
+});
+
+console.log("ARH0 ( " + identityARH + " ) has sent its msg: " + serviceRequest);
+
 //=================================CODIGO======================================
 rp.bind('tcp://127.0.0.1:9020', function(err){	//Bind para reply
 	if(err)console.log(err)
-	else console.log(" ARH escuchando en el puerto 9020 para RR")
 });
 //_____________________________________________________________________________
 pubsocket.bind('tcp://127.0.0.1:9021', function(err){	//Bind para publicar
 	if(err)console.log(err)
-	else console.log(' ARH escuchando en el puerto 9021 como publisher')
 });
 //_____________________________________________________________________________
 pullSocket.bind('tcp://127.0.0.1:9022')		//Bind para pull
-console.log(' Conectado pull en el puerto 9022')
+
 //===============================LISTENERS=====================================
-//Listener para cuando recibimos la peticion de algun RR
 rp.on('message',function(msgRR,err){
 	if( err ) {
 		throw err;
@@ -93,11 +139,14 @@ pullSocket.on('message', function(msgFO,err){
 		}
 	}
 });
+
 //_____________________________________________________________________________
 //LISTENER para Ctrl + C -> salir
 process.on('SIGINT', function() {	//Cerrar adecuadamente cada socket
 	pubsocket.close();
 	pullSocket.close();
 	rp.close();
+	rq.close();
 	process.exit();
+	
 });
