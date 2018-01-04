@@ -5,15 +5,11 @@ var auxfunctions = require('./auxfunctions.js');
 var WORKING = true;
 var workers = {};
 
-// ARGUMENTS
-if( process.argv.length != 6 ) {
-	console.log("Parametros incorrectos");
-	process.exit(1);
-}
-var portClient0 = process.argv[2];//port ARH0
-var portWorker0 = process.argv[3];//port F0
-var portClient1 = process.argv[4];//port ARH1
-var portWorker1 = process.argv[5];//port F1
+// PUERTOS
+var portClient0 ='6666';//port ARH0
+var portWorker0 ='6667';//port F0
+var portClient1 ='7777';//port ARH1
+var portWorker1 ='7778';//port F1
 
 
 // ARGUMENTS
