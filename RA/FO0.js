@@ -64,7 +64,7 @@ for(var i=0; i<publist.length; i++){
 			 console.log(err);
 		}
 		var msgARHJSON = JSON.parse(msgARH); //Pasar a JSON el string recibido
-		console.log(' \nRecibido: '+msgARH);
+		console.log(' \FO0: '+msgARH);
 		seq = msgARHJSON.seq;  //Asignamos a seq el valor de seq del objeto
 		if(seq>expectedSeq){
 		//DO NOTHING

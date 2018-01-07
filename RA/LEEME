@@ -10,9 +10,8 @@ Ejecución
 
 node FO0.js
 node FO1.js
-node proxy1.js 6666 6667 7777 7778
-node proxy0.js 4444 4445 5555 5556
-
+node --max_old_space_size=10 proxy1.js
+node --max_old_space_size=10 proxy0.js
 node --max_old_space_size=10 CLIENT0.js --production
 node --max_old_space_size=10 CLIENT1.js --production
 node --prof --max_old_space_size=10 ARH0.js --production

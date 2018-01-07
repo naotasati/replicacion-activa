@@ -50,7 +50,7 @@ function NuevaPeticion(){
 		}
 		else if((args[0]=='push' || args[0]=='unshift' || args[0]=='indexOf') && args[1]!=null){
 			//JSON de la identificacion de user y el request
-                        for (i = 0; i < 1 ; i++) {
+                        for (i = 0; i < 400 ; i++) {
 			var envioCliente_RR ={
 				ide: id,
 				request: args[0]+' '+args[1]
